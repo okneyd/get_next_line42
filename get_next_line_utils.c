@@ -6,7 +6,7 @@
 /*   By: ydemyden <ydemyden@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 15:49:54 by ydemyden          #+#    #+#             */
-/*   Updated: 2024/08/18 17:33:50 by ydemyden         ###   ########.fr       */
+/*   Updated: 2024/08/21 18:25:14 by ydemyden         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,23 +86,76 @@ char	*ft_strdup(const char *s)
 
 // Allocates and returns a new string,
 // which is the result of the concatenation of ’s1’ and ’s2’
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*comb;
-	size_t	lens1;
-	size_t	lens2;
-	size_t	summary;
+// char	*ft_strjoin(char const *s1, char const *s2)
+// {
+// 	char	*comb;
+// 	size_t	lens1;
+// 	size_t	lens2;
+// 	size_t	summary;
 
-	if (!s1 || !s2)
+// 	if (!s1 && !s2)
+// 		return (NULL);
+// 	lens1 = ft_strlen(s1);
+// 	lens2 = ft_strlen(s2);
+// 	summary = lens1 + lens2;
+// 	comb = (char *)malloc(summary + 1);
+// 	if (!comb)
+// 		return (NULL);
+// 	if (s2)
+// 		ft_memcpy(comb + lens1, s2, lens2);
+// 	if (s1)
+// 		ft_memcpy(comb, s1, lens1);
+// 	comb[summary] = '\0';
+// 	return (comb);
+// }
+char	*ft_strjoin(char *s1, char *s2)
+{
+	size_t	len1;
+	size_t	len2;
+	char	*joined;
+
+	len1 = 0;
+	len2 = 0;
+	if (s1)
+	{
+		while (s1[len1] != '\0')
+			len1++;
+	}
+	if (s1)
+	{
+		while (s2[len2] != '\0')
+			len2++;
+	}
+	joined = (char *)malloc(len1 + len2 + 1);
+	if (!joined)
 		return (NULL);
-	lens1 = ft_strlen(s1);
-	lens2 = ft_strlen(s2);
-	summary = lens1 + lens2;
-	comb = (char *)malloc(summary + 1);
-	if (!comb)
+	if (s1)
+		ft_memcpy(joined, s1, len1);
+	if (s2)
+		ft_memcpy(joined + len1, s2, len2 + 1);
+	return (joined);
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char	*substr;
+	size_t	i;
+	
+	if (!s)
 		return (NULL);
-	ft_memcpy(comb, s1, lens1);
-	ft_memcpy(comb + lens1, s2, lens2);
-	comb[summary] = '\0';
-	return (comb);
+	if (start >= ft_strlen(s))
+		return (ft_strdup(""));
+	if (len > ft_strlen(s + start))
+		len = ft_strlen(s + start);
+	substr = (char *)malloc(sizeof(char) * (len + 1));
+	if (!substr)
+		return (NULL);
+	i = 0;
+	while (i < len && s[start + i])
+	{
+		substr[i] = s[start + i];
+		i++;
+	}
+	substr[i] = '\0';
+	return (substr);
 }
