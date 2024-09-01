@@ -6,12 +6,36 @@
 /*   By: ydemyden <ydemyden@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 15:48:13 by ydemyden          #+#    #+#             */
-/*   Updated: 2024/08/27 17:19:59 by ydemyden         ###   ########.fr       */
+/*   Updated: 2024/09/01 17:03:00 by ydemyden         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // Returns a line read from a file descriptor
 #include "get_next_line.h"
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char	*substr;
+	size_t	i;
+
+	if (!s)
+		return (NULL);
+	if (start >= ft_strlen(s))
+		return (ft_strdup(""));
+	if (len > ft_strlen(s + start))
+		len = ft_strlen(s + start);
+	substr = (char *)malloc(sizeof(char) * (len + 1));
+	if (!substr)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		substr[i] = s[start + i];
+		i++;
+	}
+	substr[i] = '\0';
+	return (substr);
+}
 
 int	readandstore(int fd, char **buffer)
 {
@@ -22,30 +46,28 @@ int	readandstore(int fd, char **buffer)
 	read_buffer = malloc(BUFFER_SIZE + 1);
 	if (!read_buffer)
 		return (-1);
-	bytes = 1;
-	while (!ft_strchr(*buffer, '\n') && bytes > 0)
+	bytes = read(fd, read_buffer, BUFFER_SIZE);
+	while (bytes > 0)
 	{
-		bytes = read(fd, read_buffer, BUFFER_SIZE);
-		if (bytes < 0)
-		{
-			free(read_buffer);
-			return (-1);
-		}
 		read_buffer[bytes] = '\0';
-		temp = ft_strjoin(*buffer, read_buffer);
+		if (*buffer == NULL)
+			temp = ft_strdup(read_buffer);
+		else
+			temp = ft_strjoin(*buffer, read_buffer);
 		free(*buffer);
 		*buffer = temp;
-		if (!*buffer)
+		if (ft_strchr(*buffer, '\n'))
 		{
 			free(read_buffer);
-			return (-1);
+			return (1);
 		}
+		bytes = read(fd, read_buffer, BUFFER_SIZE);
 	}
 	free(read_buffer);
 	return (bytes);
 }
 
-char	*get_line(char **buffer)
+char	*get_a_line(char **buffer)
 {
 	char	*line;
 	char	*newline_pos;
@@ -59,8 +81,6 @@ char	*get_line(char **buffer)
 	{
 		len = newline_pos - *buffer;
 		line = ft_substr(*buffer, 0, len + 1);
-		if (!line)
-			return (NULL);
 		temp_buffer = ft_strdup(newline_pos + 1);
 		free(*buffer);
 		*buffer = temp_buffer;
@@ -75,8 +95,6 @@ char	*get_line(char **buffer)
 		line = ft_strdup(*buffer);
 		free(*buffer);
 		*buffer = NULL;
-		if (!line)
-			return (NULL);
 	}
 	return (line);
 }
@@ -91,17 +109,35 @@ char	*get_next_line(int fd)
 	reading = readandstore(fd, &buffer);
 	if (reading < 0 || (reading == 0 && (!buffer || *buffer == '\0')))
 		return (NULL);
-	return (get_line(&buffer));
+	return (get_a_line(&buffer));
 }
 
-int main()
-{
-	int	fd;
-	
-	fd = open("file.txt", O_RDONLY);
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	return (0);
-}
+// int main()
+// {
+// 	int	fd;
+
+// 	fd = open("file.txt", O_RDONLY);
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	printf("%s", get_next_line(fd));
+// 	return (0);
+// }
+// int main()
+// {
+// 	int fd = open("file.txt", O_RDONLY);
+// 	if (fd < 0)
+// 	{
+// 		perror("Failed to open file");
+// 		return 1;
+// 	}
+
+// 	char *line;
+// 	while ((line = get_next_line(fd)) != NULL)
+// 	{
+// 		printf("%s", line);
+// 		free(line);
+// 	}
+// 	close(fd);
+// 	return 0;
+// }
