@@ -6,7 +6,7 @@
 /*   By: ydemyden <ydemyden@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 15:48:13 by ydemyden          #+#    #+#             */
-/*   Updated: 2024/09/01 17:03:00 by ydemyden         ###   ########.fr       */
+/*   Updated: 2024/09/02 18:52:17 by ydemyden         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	if (!substr)
 		return (NULL);
 	i = 0;
-	while (i < len)
+	while (i < len && s[start + i])
 	{
 		substr[i] = s[start + i];
 		i++;
@@ -44,8 +44,6 @@ int	readandstore(int fd, char **buffer)
 	ssize_t	bytes;
 
 	read_buffer = malloc(BUFFER_SIZE + 1);
-	if (!read_buffer)
-		return (-1);
 	bytes = read(fd, read_buffer, BUFFER_SIZE);
 	while (bytes > 0)
 	{
@@ -72,15 +70,11 @@ char	*get_a_line(char **buffer)
 	char	*line;
 	char	*newline_pos;
 	char	*temp_buffer;
-	size_t	len;
 
-	if (!*buffer || **buffer == '\0')
-		return (NULL);
 	newline_pos = ft_strchr(*buffer, '\n');
 	if (newline_pos)
 	{
-		len = newline_pos - *buffer;
-		line = ft_substr(*buffer, 0, len + 1);
+		line = ft_substr(*buffer, 0, (newline_pos - *buffer) + 1);
 		temp_buffer = ft_strdup(newline_pos + 1);
 		free(*buffer);
 		*buffer = temp_buffer;
@@ -112,17 +106,6 @@ char	*get_next_line(int fd)
 	return (get_a_line(&buffer));
 }
 
-// int main()
-// {
-// 	int	fd;
-
-// 	fd = open("file.txt", O_RDONLY);
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	printf("%s", get_next_line(fd));
-// 	return (0);
-// }
 // int main()
 // {
 // 	int fd = open("file.txt", O_RDONLY);
