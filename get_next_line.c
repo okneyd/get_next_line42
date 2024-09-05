@@ -6,7 +6,7 @@
 /*   By: ydemyden <ydemyden@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 15:48:13 by ydemyden          #+#    #+#             */
-/*   Updated: 2024/09/02 18:52:17 by ydemyden         ###   ########.fr       */
+/*   Updated: 2024/09/05 18:35:40 by ydemyden         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	char	*substr;
 	size_t	i;
 
-	if (!s)
-		return (NULL);
 	if (start >= ft_strlen(s))
 		return (ft_strdup(""));
 	if (len > ft_strlen(s + start))
@@ -57,7 +55,7 @@ int	readandstore(int fd, char **buffer)
 		if (ft_strchr(*buffer, '\n'))
 		{
 			free(read_buffer);
-			return (1);
+			return (true);
 		}
 		bytes = read(fd, read_buffer, BUFFER_SIZE);
 	}
@@ -101,8 +99,20 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	reading = readandstore(fd, &buffer);
-	if (reading < 0 || (reading == 0 && (!buffer || *buffer == '\0')))
+	if (reading < 0)
+	{
+		if (buffer)
+			free(buffer);
+		buffer = NULL;
 		return (NULL);
+	}
+	if (reading == 0 && (!buffer || *buffer == '\0'))
+	{
+		if (buffer)
+			free(buffer);
+		buffer = NULL;
+		return (NULL);
+	}
 	return (get_a_line(&buffer));
 }
 

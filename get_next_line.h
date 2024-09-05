@@ -6,7 +6,7 @@
 /*   By: ydemyden <ydemyden@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 14:55:23 by ydemyden          #+#    #+#             */
-/*   Updated: 2024/09/02 18:48:07 by ydemyden         ###   ########.fr       */
+/*   Updated: 2024/09/05 18:09:16 by ydemyden         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1000000
+#  define BUFFER_SIZE 10
 # endif
 
 # include <unistd.h>
@@ -22,6 +22,7 @@
 # include <stdlib.h>
 # include <string.h>
 # include <fcntl.h>
+# include <stdbool.h>
 
 char	*ft_strchr(const char *s, int c);
 size_t	ft_strlen(const char *s);
