@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ydemyden <ydemyden@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 15:48:13 by ydemyden          #+#    #+#             */
-/*   Updated: 2024/09/08 12:46:05 by ydemyden         ###   ########.fr       */
+/*   Updated: 2024/09/08 16:18:12 by ydemyden         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // Returns a line read from a file descriptor
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
@@ -93,27 +93,27 @@ char	*get_a_line(char **buffer)
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
+	static char	*buffers[1024];
 	int			reading;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd >= 1024 || BUFFER_SIZE <= 0)
 		return (NULL);
-	reading = readandstore(fd, &buffer);
+	reading = readandstore(fd, &buffers[fd]);
 	if (reading < 0)
 	{
-		if (buffer)
-			free(buffer);
-		buffer = NULL;
+		if (buffers[fd])
+			free(buffers[fd]);
+		buffers[fd] = NULL;
 		return (NULL);
 	}
-	if (reading == 0 && (!buffer || *buffer == '\0'))
+	if (reading == 0 && (!buffers[fd] || *buffers[fd] == '\0'))
 	{
-		if (buffer)
-			free(buffer);
-		buffer = NULL;
+		if (buffers[fd])
+			free(buffers[fd]);
+		buffers[fd] = NULL;
 		return (NULL);
 	}
-	return (get_a_line(&buffer));
+	return (get_a_line(&buffers[fd]));
 }
 
 // int main()
